@@ -2,8 +2,7 @@ expose:
   # Set the way how to expose the service. Set the type as "ingress", 
   # "clusterIP", "nodePort" or "loadBalancer" and fill the information 
   # in the corresponding section
-  # type: ingress
-  type: nodePort
+  type: ingress
   tls:
     # Enable the tls or not. Note: if the type is "ingress" and the tls 
     # is disabled, the port must be included in the command when pull/push
@@ -22,7 +21,7 @@ expose:
     notarySecretName: ""
     # The commmon name used to generate the certificate, it's necessary
     # when the type isn't "ingress" and "secretName" is null
-    commonName: "192.168.99.100"
+    commonName: ""
   ingress:
     hosts:
       core: core.harbor.domain
@@ -88,8 +87,7 @@ expose:
 # the IP address of k8s node 
 # 
 # If Harbor is deployed behind the proxy, set it as the URL of proxy
-# externalURL: https://core.harbor.domain
-externalURL: https://192.168.99.100:30003
+externalURL: https://core.harbor.domain
 
 # The persistence is enabled by default and a default StorageClass
 # is needed in the k8s cluster to provision volumes dynamicly. 
@@ -217,13 +215,13 @@ nginx:
     repository: goharbor/nginx-photon
     tag: v1.7.4
   replicas: 1
-  # resources:
-  #   requests:
-  #     cpu: 10m
-  #     memory: 100Mi
-  #   limits:
-  #     cpu: 100m
-  #     memory: 128Mi
+  resources:
+    requests:
+      cpu: 10m
+      memory: 100Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
   nodeSelector: {}
   tolerations: []
   affinity: {}
@@ -235,13 +233,13 @@ portal:
     repository: goharbor/harbor-portal
     tag: v1.7.4
   replicas: 1
-  # resources:
-  #   requests:
-  #     cpu: 10m
-  #     memory: 100Mi
-  #   limits:
-  #     cpu: 100m
-  #     memory: 128Mi
+  resources:
+    requests:
+      cpu: 10m
+      memory: 100Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
   nodeSelector: {}
   tolerations: []
   affinity: {}
@@ -253,13 +251,13 @@ adminserver:
     repository: goharbor/harbor-adminserver
     tag: v1.7.4
   replicas: 1
-  # resources:
-  #   requests:
-  #     cpu: 20m
-  #     memory: 100Mi
-  #   limits:
-  #     cpu: 100m
-  #     memory: 128Mi
+  resources:
+    requests:
+      cpu: 20m
+      memory: 100Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
   nodeSelector: {}
   tolerations: []
   affinity: {}
@@ -303,13 +301,13 @@ jobservice:
   maxJobWorkers: 10
   # The logger for jobs: "file", "database" or "stdout"
   jobLogger: file
-  # resources:
-  #   requests:
-  #     cpu: 20m
-  #     memory: 100Mi
-  #   limits:
-  #     cpu: 100m
-  #     memory: 128Mi
+  resources:
+    requests:
+      cpu: 20m
+      memory: 100Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
   nodeSelector: {}
   tolerations: []
   affinity: {}
@@ -325,24 +323,24 @@ registry:
     image:
       repository: goharbor/registry-photon
       tag: v2.6.2-v1.7.4 
-    # resources:
-    #   requests:
-    #     cpu: 20m
-    #     memory: 100Mi
-    #   limits:
-    #     cpu: 100m
-    #     memory: 128Mi
+    resources:
+      requests:
+        cpu: 20m
+        memory: 100Mi
+      limits:
+        cpu: 100m
+        memory: 128Mi
   controller:
     image:
       repository: goharbor/harbor-registryctl
       tag: v1.7.4
-    # resources:
-    #   requests:
-    #     cpu: 20m
-    #     memory: 100Mi
-    #   limits:
-    #     cpu: 100m
-    #     memory: 128Mi
+    resources:
+      requests:
+        cpu: 20m
+        memory: 100Mi
+      limits:
+        cpu: 100m
+        memory: 128Mi
   replicas: 1
   nodeSelector: {}
   tolerations: []
@@ -362,13 +360,13 @@ chartmuseum:
     repository: goharbor/chartmuseum-photon
     tag: v1.7.4
   replicas: 1
-  # resources:
-  #   requests:
-  #     cpu: 20m
-  #     memory: 100Mi
-  #   limits:
-  #     cpu: 100m
-  #     memory: 128Mi
+  resources:
+    requests:
+      cpu: 20m
+      memory: 100Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
   nodeSelector: {}
   tolerations: []
   affinity: {}
@@ -387,13 +385,13 @@ clair:
   # The interval of clair updaters, the unit is hour, set to 0 to 
   # disable the updaters
   updatersInterval: 12
-  # resources:
-  #   requests:
-  #     cpu: 20m
-  #     memory: 100Mi
-  #   limits:
-  #     cpu: 100m
-  #     memory: 128Mi
+  resources:
+    requests:
+      cpu: 20m
+      memory: 100Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
   nodeSelector: {}
   tolerations: []
   affinity: {}
@@ -407,25 +405,25 @@ notary:
       repository: goharbor/notary-server-photon
       tag: v0.6.1-v1.7.4
     replicas: 1
-    # resources:
-    #   requests:
-    #     cpu: 20m
-    #     memory: 100Mi
-    #   limits:
-    #     cpu: 100m
-    #     memory: 128Mi
+    resources:
+      requests:
+        cpu: 20m
+        memory: 100Mi
+      limits:
+        cpu: 100m
+        memory: 128Mi
   signer:
     image:
       repository: goharbor/notary-signer-photon
       tag: v0.6.1-v1.7.4
     replicas: 1
-    # resources:
-    #   requests:
-    #     cpu: 20m
-    #     memory: 100Mi
-    #   limits:
-    #     cpu: 100m
-    #     memory: 128Mi
+    resources:
+      requests:
+        cpu: 20m
+        memory: 100Mi
+      limits:
+        cpu: 100m
+        memory: 128Mi
   nodeSelector: {}
   tolerations: []
   affinity: {}
@@ -454,13 +452,13 @@ redis:
   usePassword: true
   password: redis
   master:
-    # resources:
-    #   requests:
-    #     cpu: 20m
-    #     memory: 100Mi
-    #   limits:
-    #     cpu: 100m
-    #     memory: 128Mi
+    resources:
+      requests:
+        cpu: 20m
+        memory: 100Mi
+      limits:
+        cpu: 100m
+        memory: 128Mi
     persistence:
       enabled: false
       # storageClass: "-"
@@ -468,13 +466,13 @@ redis:
         - ReadWriteOnce
       size: 5Gi
   slave:
-    # resources:
-    #   requests:
-    #     cpu: 20m
-    #     memory: 100Mi
-    #   limits:
-    #     cpu: 100m
-    #     memory: 128Mi
+    resources:
+      requests:
+        cpu: 20m
+        memory: 100Mi
+      limits:
+        cpu: 100m
+        memory: 128Mi
 
   volumePermissions:
     enabled: true

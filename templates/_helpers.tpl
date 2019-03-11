@@ -55,7 +55,7 @@ app: "{{ template "harbor.name" . }}"
 {{- end -}}
 
 {{- define "harbor.database.host" -}}
-  {{- if eq .Values.database.type "internal" -}}
+  {{- if .Values.postgresql.enabled -}}
     {{- template "harbor.database" . }}
   {{- else -}}
     {{- .Values.database.external.host -}}
@@ -63,7 +63,7 @@ app: "{{ template "harbor.name" . }}"
 {{- end -}}
 
 {{- define "harbor.database.port" -}}
-  {{- if eq .Values.database.type "internal" -}}
+  {{- if .Values.postgresql.enabled -}}
     {{- printf "%s" "5432" -}}
   {{- else -}}
     {{- .Values.database.external.port -}}
@@ -71,16 +71,16 @@ app: "{{ template "harbor.name" . }}"
 {{- end -}}
 
 {{- define "harbor.database.username" -}}
-  {{- if eq .Values.database.type "internal" -}}
-    {{- printf "%s" "postgres" -}}
+  {{- if .Values.postgresql.enabled -}}
+    {{- .Values.postgresql.postgresqlUsername -}}
   {{- else -}}
     {{- .Values.database.external.username -}}
   {{- end -}}
 {{- end -}}
 
 {{- define "harbor.database.rawPassword" -}}
-  {{- if eq .Values.database.type "internal" -}}
-    {{- .Values.database.internal.password -}}
+  {{- if .Values.postgresql.enabled -}}
+    {{- .Values.postgresql.postgresqlPassword -}}
   {{- else -}}
     {{- .Values.database.external.password -}}
   {{- end -}}
@@ -91,15 +91,15 @@ app: "{{ template "harbor.name" . }}"
 {{- end -}}
 
 {{- define "harbor.database.coreDatabase" -}}
-  {{- if eq .Values.database.type "internal" -}}
-    {{- printf "%s" "registry" -}}
+  {{- if .Values.postgresql.enabled -}}
+    {{- .Values.postgresql.postgresqlDatabase -}}
   {{- else -}}
     {{- .Values.database.external.coreDatabase -}}
   {{- end -}}
 {{- end -}}
 
 {{- define "harbor.database.clairDatabase" -}}
-  {{- if eq .Values.database.type "internal" -}}
+  {{- if .Values.postgresql.enabled -}}
     {{- printf "%s" "postgres" -}}
   {{- else -}}
     {{- .Values.database.external.clairDatabase -}}
@@ -107,7 +107,7 @@ app: "{{ template "harbor.name" . }}"
 {{- end -}}
 
 {{- define "harbor.database.notaryServerDatabase" -}}
-  {{- if eq .Values.database.type "internal" -}}
+  {{- if .Values.postgresql.enabled -}}
     {{- printf "%s" "notaryserver" -}}
   {{- else -}}
     {{- .Values.database.external.notaryServerDatabase -}}
@@ -115,7 +115,7 @@ app: "{{ template "harbor.name" . }}"
 {{- end -}}
 
 {{- define "harbor.database.notarySignerDatabase" -}}
-  {{- if eq .Values.database.type "internal" -}}
+  {{- if .Values.postgresql.enabled -}}
     {{- printf "%s" "notarysigner" -}}
   {{- else -}}
     {{- .Values.database.external.notarySignerDatabase -}}
@@ -123,7 +123,7 @@ app: "{{ template "harbor.name" . }}"
 {{- end -}}
 
 {{- define "harbor.database.sslmode" -}}
-  {{- if eq .Values.database.type "internal" -}}
+  {{- if .Values.postgresql.enabled -}}
     {{- printf "%s" "disable" -}}
   {{- else -}}
     {{- .Values.database.external.sslmode -}}
@@ -143,7 +143,7 @@ postgres://{{ template "harbor.database.username" . }}:{{ template "harbor.datab
 {{- end -}}
 
 {{- define "harbor.redis.host" -}}
-  {{- if eq .Values.redis.type "internal" -}}
+  {{- if .Values.redis.enabled -}}
     {{- template "harbor.redis" . -}}
   {{- else -}}
     {{- .Values.redis.external.host -}}
@@ -151,7 +151,7 @@ postgres://{{ template "harbor.database.username" . }}:{{ template "harbor.datab
 {{- end -}}
 
 {{- define "harbor.redis.port" -}}
-  {{- if eq .Values.redis.type "internal" -}}
+  {{- if .Values.redis.enabled -}}
     {{- printf "%s" "6379" -}}
   {{- else -}}
     {{- .Values.redis.external.port -}}
@@ -159,7 +159,7 @@ postgres://{{ template "harbor.database.username" . }}:{{ template "harbor.datab
 {{- end -}}
 
 {{- define "harbor.redis.coreDatabaseIndex" -}}
-  {{- if eq .Values.redis.type "internal" -}}
+  {{- if .Values.redis.enabled -}}
     {{- printf "%s" "0" }}
   {{- else -}}
     {{- .Values.redis.external.coreDatabaseIndex -}}
@@ -167,7 +167,7 @@ postgres://{{ template "harbor.database.username" . }}:{{ template "harbor.datab
 {{- end -}}
 
 {{- define "harbor.redis.jobserviceDatabaseIndex" -}}
-  {{- if eq .Values.redis.type "internal" -}}
+  {{- if .Values.redis.enabled -}}
     {{- printf "%s" "1" }}
   {{- else -}}
     {{- .Values.redis.external.jobserviceDatabaseIndex -}}
@@ -175,7 +175,7 @@ postgres://{{ template "harbor.database.username" . }}:{{ template "harbor.datab
 {{- end -}}
 
 {{- define "harbor.redis.registryDatabaseIndex" -}}
-  {{- if eq .Values.redis.type "internal" -}}
+  {{- if .Values.redis.enabled -}}
     {{- printf "%s" "2" }}
   {{- else -}}
     {{- .Values.redis.external.registryDatabaseIndex -}}
@@ -183,7 +183,7 @@ postgres://{{ template "harbor.database.username" . }}:{{ template "harbor.datab
 {{- end -}}
 
 {{- define "harbor.redis.chartmuseumDatabaseIndex" -}}
-  {{- if eq .Values.redis.type "internal" -}}
+  {{- if .Values.redis.enabled -}}
     {{- printf "%s" "3" }}
   {{- else -}}
     {{- .Values.redis.external.chartmuseumDatabaseIndex -}}
@@ -191,7 +191,9 @@ postgres://{{ template "harbor.database.username" . }}:{{ template "harbor.datab
 {{- end -}}
 
 {{- define "harbor.redis.rawPassword" -}}
-  {{- if and (eq .Values.redis.type "external") .Values.redis.external.password -}}
+  {{- if and .Values.redis.usePassword .Values.redis.password -}}
+    {{- .Values.redis.password -}}
+  {{- else if and .Values.redis.enabled .Values.redis.external.password -}}
     {{- .Values.redis.external.password -}}
   {{- end -}}
 {{- end -}}
@@ -231,7 +233,11 @@ host:port,pool_size,password
 {{- end -}}
 
 {{- define "harbor.redis" -}}
-  {{- printf "%s-redis" (include "harbor.fullname" .) -}}
+  {{- printf "%s-redis-master" .Release.Name -}}
+{{- end -}}
+
+{{- define "harbor.adminserver" -}}	
+  {{- printf "%s-adminserver" (include "harbor.fullname" .) -}}	
 {{- end -}}
 
 {{- define "harbor.jobservice" -}}
@@ -247,7 +253,7 @@ host:port,pool_size,password
 {{- end -}}
 
 {{- define "harbor.database" -}}
-  {{- printf "%s-database" (include "harbor.fullname" .) -}}
+  {{- printf "%s-postgresql" .Release.Name -}}
 {{- end -}}
 
 {{- define "harbor.clair" -}}
