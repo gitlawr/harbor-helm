@@ -13,16 +13,20 @@ expose:
     # Fill the name of secret if you want to use your own TLS certificate
     # and private key. The secret must contain keys named tls.crt and 
     # tls.key that contain the certificate and private key to use for TLS
-    # The certificate and private key will be generated automatically if 
-    # it is not set
     secretName: ""
+    # Fill the caCertificate of tls.crt and caPrivateKey of tls.key if you
+    # want to create a new secret of your own TLS certificate.
+    # The certificate and private key will be generated automatically if
+    # both secretName and caPrivateKey and caCertificate are not set
+    caCertificate: ""
+    caPrivateKey: ""
     # By default, the Notary service will use the same cert and key as
     # described above. Fill the name of secret if you want to use a 
     # separated one. Only needed when the type is "ingress".
     notarySecretName: ""
     # The commmon name used to generate the certificate, it's necessary
     # when the type isn't "ingress" and "secretName" is null
-    commonName: "192.168.99.100"
+    # commonName: "192.168.99.100"
   ingress:
     hosts:
       core: core.harbor.domain
@@ -115,18 +119,21 @@ persistence:
       subPath: ""
       accessMode: ReadWriteOnce
       size: 5Gi
+      hostPath: /var/lib/harbor/registry
     chartmuseum:
       existingClaim: ""
       storageClass: ""
       subPath: ""
       accessMode: ReadWriteOnce
       size: 5Gi
+      hostPath: /var/lib/harbor/chartmuseum
     jobservice:
       existingClaim: ""
       storageClass: ""
       subPath: ""
       accessMode: ReadWriteOnce
       size: 1Gi
+      hostPath: /var/lib/harbor/jobservice
   # Define which storage backend is used for registry and chartmuseum to store
   # images and charts. Refer to 
   # https://github.com/docker/distribution/blob/master/docs/configuration.md#storage 
@@ -207,7 +214,7 @@ imagePullPolicy: IfNotPresent
 
 logLevel: debug
 # The initial password of Harbor admin. Change it from portal after launching Harbor
-harborAdminPassword: "harbor"
+harborAdminPassword: "harbor12345"
 # The secret key used for encryption. Must be a string of 16 chars.
 secretKey: "add-your-secret0"
 
@@ -357,10 +364,10 @@ registry:
   secret: ""
 
 chartmuseum:
-  enabled: false
+  enabled: true
   image:
     repository: goharbor/chartmuseum-photon
-    tag: v1.7.4
+    tag: v0.8.1-v1.7.4
   replicas: 1
   # resources:
   #   requests:
@@ -439,63 +446,6 @@ notary:
   # They will be generated if not set.
   secretName: ""
 
-redis:
-  enabled: true
-  image:
-    registry: docker.io
-    repository: bitnami/redis
-    tag: 4.0.13
-    pullPolicy: IfNotPresent
-
-  cluster:
-    enabled: true
-    slaveCount: 1
-
-  usePassword: true
-  password: redis
-  master:
-    # resources:
-    #   requests:
-    #     cpu: 20m
-    #     memory: 100Mi
-    #   limits:
-    #     cpu: 100m
-    #     memory: 128Mi
-    persistence:
-      enabled: false
-      # storageClass: "-"
-      accessModes:
-        - ReadWriteOnce
-      size: 5Gi
-  slave:
-    # resources:
-    #   requests:
-    #     cpu: 20m
-    #     memory: 100Mi
-    #   limits:
-    #     cpu: 100m
-    #     memory: 128Mi
-
-  volumePermissions:
-    enabled: true
-    image:
-      registry: docker.io
-      repository: bitnami/minideb
-      tag: latest
-      pullPolicy: IfNotPresent
-    resources: {}
-
-  external:
-    host: "192.168.0.2"
-    port: "6379"
-    # The "coreDatabaseIndex" must be "0" as the library Harbor
-    # used doesn't support configuring it
-    coreDatabaseIndex: "0"
-    jobserviceDatabaseIndex: "1"
-    registryDatabaseIndex: "2"
-    chartmuseumDatabaseIndex: "3"
-    password: ""
-
 postgresql:
   enabled: true
 
@@ -547,3 +497,59 @@ database:
     notaryServerDatabase: "notary_server"
     notarySignerDatabase: "notary_signer"
     sslmode: "disable"
+
+redis:
+  enabled: true
+  image:
+    repository: bitnami/redis
+    tag: 4.0.13
+    pullPolicy: IfNotPresent
+
+  cluster:
+    enabled: true
+    slaveCount: 1
+
+  usePassword: true
+  password: redis
+  master:
+    # resources:
+    #   requests:
+    #     cpu: 20m
+    #     memory: 100Mi
+    #   limits:
+    #     cpu: 100m
+    #     memory: 128Mi
+    persistence:
+      enabled: false
+      # storageClass: "-"
+      accessModes:
+        - ReadWriteOnce
+      size: 5Gi
+  slave:
+    # resources:
+    #   requests:
+    #     cpu: 20m
+    #     memory: 100Mi
+    #   limits:
+    #     cpu: 100m
+    #     memory: 128Mi
+
+  volumePermissions:
+    enabled: true
+    image:
+      repository: bitnami/minideb
+      tag: latest
+      pullPolicy: IfNotPresent
+    resources: {}
+
+  external:
+    host: "192.168.0.2"
+    port: "6379"
+    # The "coreDatabaseIndex" must be "0" as the library Harbor
+    # used doesn't support configuring it
+    coreDatabaseIndex: "0"
+    jobserviceDatabaseIndex: "1"
+    registryDatabaseIndex: "2"
+    chartmuseumDatabaseIndex: "3"
+    password: ""
+

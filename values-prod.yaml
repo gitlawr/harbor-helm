@@ -113,18 +113,21 @@ persistence:
       subPath: ""
       accessMode: ReadWriteOnce
       size: 5Gi
+      hostPath: /var/lib/harbor/registry
     chartmuseum:
       existingClaim: ""
       storageClass: ""
       subPath: ""
       accessMode: ReadWriteOnce
       size: 5Gi
+      hostPath: /var/lib/harbor/chartmuseum
     jobservice:
       existingClaim: ""
       storageClass: ""
       subPath: ""
       accessMode: ReadWriteOnce
       size: 1Gi
+      hostPath: /var/lib/harbor/jobservice
   # Define which storage backend is used for registry and chartmuseum to store
   # images and charts. Refer to 
   # https://github.com/docker/distribution/blob/master/docs/configuration.md#storage 
@@ -358,7 +361,7 @@ chartmuseum:
   enabled: false
   image:
     repository: goharbor/chartmuseum-photon
-    tag: v1.7.4
+    tag: v0.8.1-v1.7.4
   replicas: 1
   resources:
     requests:

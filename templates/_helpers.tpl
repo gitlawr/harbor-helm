@@ -275,3 +275,30 @@ host:port,pool_size,password
 {{- define "harbor.ingress" -}}
   {{- printf "%s-ingress" (include "harbor.fullname" .) -}}
 {{- end -}}
+
+{{- define "harbor.cert" -}}
+  {{- printf "%s-cert" (include "harbor.fullname" .) -}}
+{{- end -}}
+
+{{- define "harbor.externalURL" -}}
+    {{- if eq .Values.expose.type "ingress" }}
+      {{- printf "https://%s" .Values.expose.ingress.hosts.core -}}
+    {{- else if eq .Values.expose.type "clusterIP" }}
+      {{- printf "https://%s" .Values.expose.clusterIP.name -}}
+    {{- else }}
+      {{- .Values.externalURL -}}
+    {{- end }}
+{{- end -}}
+
+{{- define "harbor.certPath" -}}
+  {{- (include "harbor.externalURL" .) | trimPrefix "https://"  | trimPrefix "http://" -}}
+{{- end -}}
+
+{{/*
+The commmon name used to generate the certificate, it's necessary,
+when the type isn't "ingress" and "secretName" or "caCertificate" and "caPrivateKey" is null
+*/}}
+{{- define "harbor.tlsCommonName" -}}
+  {{- $trimURL := (include "harbor.externalURL" .)  | trimPrefix "https://"  | trimPrefix "http://" -}}
+  {{ regexReplaceAll ":.*$" $trimURL "${1}" }}
+{{- end -}}

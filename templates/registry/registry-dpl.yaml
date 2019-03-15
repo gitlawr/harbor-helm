@@ -129,7 +129,8 @@ spec:
         persistentVolumeClaim:
           claimName: {{ .Values.persistence.persistentVolumeClaim.registry.existingClaim | default (include "harbor.registry" .) }}
       {{- else }}
-        emptyDir: {}
+        hostPath: 
+          path: {{ .Values.persistence.persistentVolumeClaim.registry.hostPath }}
       {{- end }}
       {{- if and .Values.persistence.enabled (eq .Values.persistence.imageChartStorage.type "gcs") }}
       - name: gcs-key

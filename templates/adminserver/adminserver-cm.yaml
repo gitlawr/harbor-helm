@@ -12,7 +12,7 @@ data:
   POSTGRESQL_USERNAME: "{{ template "harbor.database.username" . }}"
   POSTGRESQL_DATABASE: "{{ template "harbor.database.coreDatabase" . }}"
   POSTGRESQL_SSLMODE: "{{ template "harbor.database.sslmode" . }}"
-  EXT_ENDPOINT: "{{ .Values.externalURL }}"
+  EXT_ENDPOINT: "{{ template  "harbor.externalURL" . }}"
   CORE_URL: "http://{{ template "harbor.core" . }}"
   JOBSERVICE_URL: "http://{{ template "harbor.fullname" . }}-jobservice"
   REGISTRY_URL: "http://{{ template "harbor.registry" . }}:5000"

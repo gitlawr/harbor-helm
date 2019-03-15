@@ -55,7 +55,6 @@ Create chart name and version as used by the chart label.
 Return the proper PostgreSQL image name
 */}}
 {{- define "postgresql.image" -}}
-{{- $registryName := .Values.image.registry -}}
 {{- $repositoryName := .Values.image.repository -}}
 {{- $tag := .Values.image.tag | toString -}}
 {{/*
@@ -67,10 +66,10 @@ Also, we can't use a single if because lazy evaluation is not an option
     {{- if .Values.global.imageRegistry }}
         {{- printf "%s/%s:%s" .Values.global.imageRegistry $repositoryName $tag -}}
     {{- else -}}
-        {{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
+        {{- printf "%s:%s" $repositoryName $tag -}}
     {{- end -}}
 {{- else -}}
-    {{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
+    {{- printf "%s:%s" $repositoryName $tag -}}
 {{- end -}}
 {{- end -}}
 
@@ -78,7 +77,6 @@ Also, we can't use a single if because lazy evaluation is not an option
 Return the proper image name to change the volume permissions
 */}}
 {{- define "postgresql.volumePermissions.image" -}}
-{{- $registryName := .Values.volumePermissions.image.registry -}}
 {{- $repositoryName := .Values.volumePermissions.image.repository -}}
 {{- $tag := .Values.volumePermissions.image.tag | toString -}}
 {{/*
@@ -90,10 +88,10 @@ Also, we can't use a single if because lazy evaluation is not an option
     {{- if .Values.global.imageRegistry }}
         {{- printf "%s/%s:%s" .Values.global.imageRegistry $repositoryName $tag -}}
     {{- else -}}
-        {{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
+        {{- printf "%s:%s" $repositoryName $tag -}}
     {{- end -}}
 {{- else -}}
-    {{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
+    {{- printf "%s:%s" $repositoryName $tag -}}
 {{- end -}}
 {{- end -}}
 
@@ -102,9 +100,8 @@ Also, we can't use a single if because lazy evaluation is not an option
 Return the proper PostgreSQL metrics image name
 */}}
 {{- define "metrics.image" -}}
-{{- $registryName :=  default "docker.io" .Values.metrics.image.registry -}}
 {{- $tag := default "latest" .Values.metrics.image.tag | toString -}}
-{{- printf "%s/%s:%s" $registryName .Values.metrics.image.repository $tag -}}
+{{- printf "%s:%s" .Values.metrics.image.repository $tag -}}
 {{- end -}}
 
 {{/*

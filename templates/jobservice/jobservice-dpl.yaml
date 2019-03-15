@@ -79,7 +79,8 @@ spec:
         persistentVolumeClaim:
           claimName: {{ .Values.persistence.persistentVolumeClaim.jobservice.existingClaim | default (include "harbor.jobservice" .) }}  
         {{- else }}
-        emptyDir: {}
+        hostPath:
+          path: {{ .Values.persistence.persistentVolumeClaim.jobservice.hostPath }}
         {{- end }}
     {{- with .Values.jobservice.nodeSelector }}
       nodeSelector:

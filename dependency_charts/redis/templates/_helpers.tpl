@@ -46,7 +46,6 @@ Return the appropriate apiVersion for networkpolicy.
 Return the proper Redis image name
 */}}
 {{- define "redis.image" -}}
-{{- $registryName := .Values.image.registry -}}
 {{- $repositoryName := .Values.image.repository -}}
 {{- $tag := .Values.image.tag | toString -}}
 {{/*
@@ -58,10 +57,10 @@ Also, we can't use a single if because lazy evaluation is not an option
     {{- if .Values.global.imageRegistry }}
         {{- printf "%s/%s:%s" .Values.global.imageRegistry $repositoryName $tag -}}
     {{- else -}}
-        {{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
+        {{- printf "%s:%s" $repositoryName $tag -}}
     {{- end -}}
 {{- else -}}
-    {{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
+    {{- printf "%s:%s" $repositoryName $tag -}}
 {{- end -}}
 {{- end -}}
 
@@ -69,20 +68,18 @@ Also, we can't use a single if because lazy evaluation is not an option
 Return the proper image name (for the metrics image)
 */}}
 {{- define "metrics.image" -}}
-{{- $registryName :=  .Values.metrics.image.registry -}}
 {{- $repositoryName := .Values.metrics.image.repository -}}
 {{- $tag := .Values.metrics.image.tag | toString -}}
-{{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
+{{- printf "%s:%s" $repositoryName $tag -}}
 {{- end -}}
 
 {{/*
 Return the proper image name (for the init container volume-permissions image)
 */}}
 {{- define "volumePermissions.image" -}}
-{{- $registryName :=  .Values.volumePermissions.image.registry -}}
 {{- $repositoryName := .Values.volumePermissions.image.repository -}}
 {{- $tag := .Values.volumePermissions.image.tag | toString -}}
-{{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
+{{- printf "%s:%s" $repositoryName $tag -}}
 {{- end -}}
 
 {{/*
@@ -169,7 +166,6 @@ Get the password secret.
 Return sysctl image
 */}}
 {{- define "redis.sysctl.image" -}}
-{{- $registryName :=  default "docker.io" .Values.sysctlImage.registry -}}
 {{- $tag := default "latest" .Values.sysctlImage.tag | toString -}}
-{{- printf "%s/%s:%s" $registryName .Values.sysctlImage.repository $tag -}}
+{{- printf "%s:%s" .Values.sysctlImage.repository $tag -}}
 {{- end -}}

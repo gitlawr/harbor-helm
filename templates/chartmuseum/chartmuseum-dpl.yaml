@@ -73,7 +73,8 @@ spec:
         persistentVolumeClaim:
           claimName: {{ .Values.persistence.persistentVolumeClaim.chartmuseum.existingClaim | default (include "harbor.chartmuseum" .) }}
       {{- else }}
-        emptyDir: {}
+        hostPath:
+          path: {{ .Values.persistence.persistentVolumeClaim.chartmuseum.hostPath }}
       {{- end }}
       {{- if and .Values.persistence.enabled (eq .Values.persistence.imageChartStorage.type "gcs") }}
       - name: gcs-key

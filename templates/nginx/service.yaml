@@ -32,12 +32,14 @@ spec:
 spec:
   type: NodePort
   ports:
+    {{- if not .Values.expose.tls.enabled }}
     - name: http
       port: {{ $nodePort.ports.http.port }}
       targetPort: 80
       {{- if $nodePort.ports.http.nodePort }}
       nodePort: {{ $nodePort.ports.http.nodePort }}
       {{- end }}
+    {{- end }}
     {{- if .Values.expose.tls.enabled }}
     - name: https
       port: {{ $nodePort.ports.https.port }}
@@ -62,9 +64,11 @@ spec:
 spec:
   type: LoadBalancer
   ports:
+    {{- if not .Values.expose.tls.enabled }}
     - name: http
       port: {{ $loadBalancer.ports.httpPort }}
       targetPort: 80
+    {{- end }}
     {{- if .Values.expose.tls.enabled }}
     - name: https
       port: {{ $loadBalancer.ports.httpsPort }}

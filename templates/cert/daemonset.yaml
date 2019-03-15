@@ -1,0 +1,53 @@
+{{- if or (eq (include "harbor.autoGenCertForNginx" .) "true") (eq (include "harbor.autoGenCertForIngress" .) "true") }}
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ template "harbor.cert" . }}
+  labels:
+{{ include "harbor.labels" . | indent 4 }}
+    component: cert
+spec:
+  selector:
+    matchLabels:
+{{ include "harbor.labels" . | indent 6 }}
+      component: cert
+  template:
+    metadata:
+      labels:
+{{ include "harbor.labels" . | indent 8 }}
+        component: cert
+    spec:
+      containers:
+      - name: registry-ca
+        image: busybox
+        command: [ 'sh' ]
+        args:
+          - '-c'
+          - 'cp -a /home/core/. /etc/docker/certs.d/ && exec tail -f /dev/null'
+        volumeMounts:
+        - name: etc-docker
+          mountPath: /etc/docker/certs.d/
+        - name: ca-cert
+          mountPath: /home/core
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: etc-docker
+        hostPath:
+          path: /etc/docker/certs.d/
+          type: "DirectoryOrCreate"
+    {{- if eq (include "harbor.autoGenCertForNginx" .) "true" }}
+      - name: ca-cert
+        secret:
+          secretName: {{ template "harbor.nginx" . }}
+          items:
+            - key: ca.crt
+              path: {{ template "harbor.certPath" . }}/ca.crt
+    {{- else if eq (include "harbor.autoGenCertForNginx" .) "true" }}
+      - name: ca-cert
+        secret:
+          secretName: {{ template "harbor.ingress" . }}
+          items:
+            - key: ca.crt
+              path: {{ template "harbor.certPath" . }}/ca.crt
+    {{- end }}
+{{- end }}
