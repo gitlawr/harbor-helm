@@ -54,7 +54,7 @@ spec:
         - containerPort: 5001
         volumeMounts:
         - name: registry-data
-          mountPath: {{ .Values.persistence.imageChartStorage.filesystem.rootdirectory }}
+          mountPath: {{ .Values.imageChartStorage.filesystem.rootdirectory }}
           subPath: {{ .Values.persistence.persistentVolumeClaim.registry.subPath }}
         - name: registry-root-certificate
           mountPath: /etc/registry/root.crt
@@ -62,7 +62,7 @@ spec:
         - name: registry-config
           mountPath: /etc/registry/config.yml
           subPath: config.yml
-        {{- if and .Values.persistence.enabled (eq .Values.persistence.imageChartStorage.type "gcs") }}
+        {{- if and .Values.persistence.enabled (eq .Values.imageChartStorage.type "gcs") }}
         - name: gcs-key
           mountPath: /etc/registry/gcs-key.json
           subPath: gcs-key.json
@@ -105,7 +105,7 @@ spec:
         - containerPort: 8080
         volumeMounts:
         - name: registry-data
-          mountPath: {{ .Values.persistence.imageChartStorage.filesystem.rootdirectory }}
+          mountPath: {{ .Values.imageChartStorage.filesystem.rootdirectory }}
           subPath: {{ .Values.persistence.persistentVolumeClaim.registry.subPath }}
         - name: registry-config
           mountPath: /etc/registry/config.yml
@@ -125,13 +125,14 @@ spec:
         configMap:
           name: "{{ template "harbor.registry" . }}"
       - name: registry-data
-      {{- if and .Values.persistence.enabled (eq .Values.persistence.imageChartStorage.type "filesystem") }}
+      {{- if and .Values.persistence.enabled (eq .Values.imageChartStorage.type "filesystem") }}
         persistentVolumeClaim:
           claimName: {{ .Values.persistence.persistentVolumeClaim.registry.existingClaim | default (include "harbor.registry" .) }}
       {{- else }}
-        emptyDir: {}
+        hostPath: 
+          path: {{ .Values.persistence.persistentVolumeClaim.registry.hostPath }}
       {{- end }}
-      {{- if and .Values.persistence.enabled (eq .Values.persistence.imageChartStorage.type "gcs") }}
+      {{- if and .Values.persistence.enabled (eq .Values.imageChartStorage.type "gcs") }}
       - name: gcs-key
         secret:
           secretName: {{ template "harbor.registry" . }}

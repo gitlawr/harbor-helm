@@ -1,6 +1,6 @@
 expose:
-  # Set the way how to expose the service. Set the type as "ingress", 
-  # "clusterIP", "nodePort" or "loadBalancer" and fill the information 
+  # Set the way how to expose the service. Set the type as "ingress",
+  # "clusterIP", "nodePort" or "loadBalancer" and fill the information
   # in the corresponding section
   type: ingress
   tls:
@@ -8,7 +8,7 @@ expose:
     # and both the letsEncrypt and rancher type will use certmanager issuer to auto-create TLS certificate.
     type: secretName
     # Fill the name of secret if you want to use your own TLS certificate
-    # and private key. The secret must contain keys named tls.crt and 
+    # and private key. The secret must contain keys named tls.crt and
     # tls.key that contain the certificate and private key to use for TLS
     secretName: ""
     # Fill the caCertificate of tls.crt and caPrivateKey of tls.key if you
@@ -18,7 +18,7 @@ expose:
     domainCert: ""
     domainKey: ""
     # By default, the Notary service will use the same cert and key as
-    # described above. Fill the name of secret if you want to use a 
+    # described above. Fill the name of secret if you want to use a
     # separated one. Only needed when the type is "ingress".
     notarySecretName: ""
   ingress:
@@ -36,7 +36,7 @@ expose:
     ports:
       # The service port Harbor listens on when serving with HTTPS
       httpsPort: 443
-      # The service port Notary listens on. Only needed when notary.enabled 
+      # The service port Notary listens on. Only needed when notary.enabled
       # is set to true
       notaryPort: 4443
   nodePort:
@@ -49,7 +49,7 @@ expose:
         # The node port Harbor listens on when serving with HTTPS
         nodePort: 30003
       # Only needed when notary.enabled is set to true
-      notary: 
+      notary:
         # The service port Notary listens on
         port: 4443
         # The node port Notary listens on
@@ -60,7 +60,7 @@ expose:
     ports:
       # The service port Harbor listens on when serving with HTTPS
       httpsPort: 443
-      # The service port Notary listens on. Only needed when notary.enabled 
+      # The service port Notary listens on. Only needed when notary.enabled
       # is set to true
       notaryPort: 4443
   letsEncrypt:
@@ -70,34 +70,34 @@ expose:
 # The external URL for Harbor core service. It is used to
 # 1) populate the docker/helm commands showed on portal
 # 2) populate the token service URL returned to docker/notary client
-# 
+#
 # Format: protocol://domain[:port]. Usually:
-# 1) if "expose.type" is "ingress", the "domain" should be 
+# 1) if "expose.type" is "ingress", the "domain" should be
 # the value of "expose.ingress.hosts.core"
 # 2) if "expose.type" is "clusterIP", the "domain" should be
 # the value of "expose.clusterIP.name"
 # 3) if "expose.type" is "nodePort", the "domain" should be
-# the IP address of k8s node 
-# 
+# the IP address of k8s node
+#
 # If Harbor is deployed behind the proxy, set it as the URL of proxy
 # externalURL: https://core.harbor.domain
 externalURL: https://192.168.99.100:30003
 
 # The persistence is enabled by default and a default StorageClass
-# is needed in the k8s cluster to provision volumes dynamicly. 
+# is needed in the k8s cluster to provision volumes dynamicly.
 # Specify another StorageClass in the "storageClass" or set "existingClaim"
 # if you have already existing persistent volumes to use
 #
-# For storing images and charts, you can also use "azure", "gcs", "s3", 
+# For storing images and charts, you can also use "azure", "gcs", "s3",
 # "swift" or "oss". Set it in the "imageChartStorage" section
 persistence:
   enabled: false
-  # Setting it to "keep" to avoid removing PVCs during a helm delete 
+  # Setting it to "keep" to avoid removing PVCs during a helm delete
   # operation. Leaving it empty will delete PVCs after the chart deleted
   resourcePolicy: "keep"
   persistentVolumeClaim:
     registry:
-      # Use the existing PVC which must be created manually before bound, 
+      # Use the existing PVC which must be created manually before bound,
       # and specify the "subPath" if the PVC is shared with other components
       existingClaim: ""
       # Specify the "storageClass" used to provision the volume. Or the default
@@ -321,7 +321,7 @@ registry:
   registry:
     image:
       repository: goharbor/registry-photon
-      tag: v2.6.2-v1.7.4 
+      tag: v2.6.2-v1.7.4
     resources:
       requests:
         cpu: 20m
@@ -381,7 +381,7 @@ clair:
   # The http(s) proxy used to update vulnerabilities database from internet
   httpProxy:
   httpsProxy:
-  # The interval of clair updaters, the unit is hour, set to 0 to 
+  # The interval of clair updaters, the unit is hour, set to 0 to
   # disable the updaters
   updatersInterval: 12
   resources:
@@ -545,3 +545,4 @@ redis:
     registryDatabaseIndex: "2"
     chartmuseumDatabaseIndex: "3"
     password: ""
+

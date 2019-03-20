@@ -22,7 +22,7 @@ data:
   DISABLE_API: "false"
   DISABLE_STATEFILES: "false"
   ALLOW_OVERWRITE: "true"
-  #CHART_URL: {{ .Values.externalURL }}/chartrepo
+  #CHART_URL: {{ template  "harbor.externalURL" . }}/chartrepo
   AUTH_ANONYMOUS_GET: "false"
   TLS_CERT:
   TLS_KEY:
@@ -32,7 +32,7 @@ data:
   MAX_UPLOAD_SIZE: "20971520"
   CHART_POST_FORM_FIELD_NAME: "chart"
   PROV_POST_FORM_FIELD_NAME: "prov"
-{{- $storage := .Values.persistence.imageChartStorage }}
+{{- $storage := .Values.imageChartStorage }}
 {{- $storageType := $storage.type }}
 {{- if eq $storageType "filesystem" }}
   STORAGE: "local"

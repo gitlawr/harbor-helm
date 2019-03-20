@@ -68,7 +68,7 @@ spec:
         - name: token-service-private-key
           mountPath: /etc/core/private_key.pem
           subPath: tokenServicePrivateKey
-        {{- if eq (include "harbor.autoGenCert" .) "true" }}
+        {{- if and (ne .Values.expose.tls.type "secretName") (ne .Values.expose.tls.type "custom CA") }}
         - name: ca-download
           mountPath: /etc/core/ca/ca.crt
           subPath: ca.crt
@@ -96,18 +96,24 @@ spec:
           {{- else }}
           secretName: {{ template "harbor.core" . }}
           {{- end }}
-      {{- if eq (include "harbor.autoGenCert" .) "true" }}
       - name: ca-download
         secret:
-        {{- if eq (include "harbor.autoGenCertForIngress" .) "true" }}
+        {{- if and (eq .Values.expose.type "ingress") (ne .Values.expose.tls.type "secretName") }}
           secretName: "{{ template "harbor.ingress" . }}"
+          items:
+          {{- if or (eq .Values.expose.tls.type "rancher") (eq .Values.expose.tls.type "letsEncrypt")}}
+            - key: tls.crt
+              path: ca.crt
+          {{- else }}
+            - key: ca.crt
+              path: ca.crt
+          {{- end }}
         {{- else }}
           secretName: {{ template "harbor.nginx" . }}
-        {{- end }}
           items:
             - key: ca.crt
               path: ca.crt
-      {{- end }}
+        {{- end }}
       - name: psc
         emptyDir: {}
     {{- with .Values.core.nodeSelector }}

@@ -11,14 +11,9 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-    - name: http
-      port: {{ $clusterIP.ports.httpPort }}
-      targetPort: 80
-    {{- if .Values.expose.tls.enabled }}
     - name: https
       port: {{ $clusterIP.ports.httpsPort }}
       targetPort: 443
-    {{- end }}
     {{- if .Values.notary.enabled }}
     - name: notary
       port: {{ $clusterIP.ports.notaryPort }}
@@ -32,20 +27,12 @@ spec:
 spec:
   type: NodePort
   ports:
-    - name: http
-      port: {{ $nodePort.ports.http.port }}
-      targetPort: 80
-      {{- if $nodePort.ports.http.nodePort }}
-      nodePort: {{ $nodePort.ports.http.nodePort }}
-      {{- end }}
-    {{- if .Values.expose.tls.enabled }}
     - name: https
       port: {{ $nodePort.ports.https.port }}
       targetPort: 443
       {{- if $nodePort.ports.https.nodePort }}
       nodePort: {{ $nodePort.ports.https.nodePort }}
       {{- end }}
-    {{- end }}
     {{- if .Values.notary.enabled }}
     - name: notary
       port: {{ $nodePort.ports.notary.port }}
@@ -62,14 +49,9 @@ spec:
 spec:
   type: LoadBalancer
   ports:
-    - name: http
-      port: {{ $loadBalancer.ports.httpPort }}
-      targetPort: 80
-    {{- if .Values.expose.tls.enabled }}
     - name: https
       port: {{ $loadBalancer.ports.httpsPort }}
       targetPort: 443
-    {{- end }}
     {{- if .Values.notary.enabled }}
     - name: notary
       port: {{ $loadBalancer.ports.notaryPort }}

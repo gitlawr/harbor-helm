@@ -55,8 +55,8 @@ spec:
               secretKeyRef:
                 name: "{{ template "harbor.jobservice" . }}"
                 key: secret
-          - name: CORE_URL
-            value: "http://{{ template "harbor.core" . }}"
+          - name: ADMINSERVER_URL
+            value: "http://{{ template "harbor.adminserver" . }}"
           - name: REGISTRY_CONTROLLER_URL
             value: "http://{{ template "harbor.registry" . }}:8080"
           - name: LOG_LEVEL
@@ -79,7 +79,8 @@ spec:
         persistentVolumeClaim:
           claimName: {{ .Values.persistence.persistentVolumeClaim.jobservice.existingClaim | default (include "harbor.jobservice" .) }}  
         {{- else }}
-        emptyDir: {}
+        hostPath:
+          path: {{ .Values.persistence.persistentVolumeClaim.jobservice.hostPath }}
         {{- end }}
     {{- with .Values.jobservice.nodeSelector }}
       nodeSelector:

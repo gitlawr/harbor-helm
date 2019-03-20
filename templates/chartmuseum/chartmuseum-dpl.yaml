@@ -62,20 +62,21 @@ spec:
         - name: chartmuseum-data
           mountPath: /chart_storage
           subPath: {{ .Values.persistence.persistentVolumeClaim.chartmuseum.subPath }}
-        {{- if and .Values.persistence.enabled (eq .Values.persistence.imageChartStorage.type "gcs") }}
+        {{- if and .Values.persistence.enabled (eq .Values.imageChartStorage.type "gcs") }}
         - name: gcs-key
           mountPath: /etc/chartmuseum/gcs-key.json
           subPath: gcs-key.json
         {{- end }}
       volumes:
       - name: chartmuseum-data
-      {{- if and .Values.persistence.enabled (eq .Values.persistence.imageChartStorage.type "filesystem") }}
+      {{- if and .Values.persistence.enabled (eq .Values.imageChartStorage.type "filesystem") }}
         persistentVolumeClaim:
           claimName: {{ .Values.persistence.persistentVolumeClaim.chartmuseum.existingClaim | default (include "harbor.chartmuseum" .) }}
       {{- else }}
-        emptyDir: {}
+        hostPath:
+          path: {{ .Values.persistence.persistentVolumeClaim.chartmuseum.hostPath }}
       {{- end }}
-      {{- if and .Values.persistence.enabled (eq .Values.persistence.imageChartStorage.type "gcs") }}
+      {{- if and .Values.persistence.enabled (eq .Values.imageChartStorage.type "gcs") }}
       - name: gcs-key
         secret:
           secretName: {{ template "harbor.registry" . }}

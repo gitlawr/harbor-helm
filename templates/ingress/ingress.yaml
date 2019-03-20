@@ -9,8 +9,10 @@ metadata:
 {{ include "harbor.labels" . | indent 4 }}
   annotations:
 {{ toYaml $ingress.annotations | indent 4 }}
+  {{- if ne .Values.expose.tls.type "secretName" }}
+    certmanager.k8s.io/issuer: {{ template "harbor.ingress" . }}
+  {{- end }}
 spec:
-  {{- if $tls.enabled }}
   tls:
   - hosts:
     - {{ $ingress.hosts.core }}
@@ -29,7 +31,6 @@ spec:
     {{- else }}
     secretName: "{{ template "harbor.ingress" . }}"
     {{- end }}
-  {{- end }}
   {{- end }}
   rules:
   - host: {{ $ingress.hosts.core }}

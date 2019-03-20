@@ -18,11 +18,7 @@ spec:
 {{ include "harbor.labels" . | indent 8 }}
         component: nginx
       annotations:
-      {{- if not .Values.expose.tls.enabled }}
-        checksum/configmap: {{ include (print $.Template.BasePath "/nginx/configmap-http.yaml") . | sha256sum }}
-      {{- else }}
         checksum/configmap: {{ include (print $.Template.BasePath "/nginx/configmap-https.yaml") . | sha256sum }}
-      {{- end }}
       {{- if eq (include "harbor.autoGenCertForNginx" .) "true" }}
         checksum/secret: {{ include (print $.Template.BasePath "/nginx/secret.yaml") . | sha256sum }}
       {{- end }}
@@ -58,15 +54,12 @@ spec:
         - name: config
           mountPath: /etc/nginx/nginx.conf
           subPath: nginx.conf
-        {{- if .Values.expose.tls.enabled }}
         - name: certificate
           mountPath: /etc/nginx/cert
-        {{- end }}
       volumes:
       - name: config
         configMap:
           name: {{ template "harbor.nginx" . }}
-      {{- if .Values.expose.tls.enabled }}
       - name: certificate
         secret:
           {{- if .Values.expose.tls.secretName }}
@@ -74,7 +67,6 @@ spec:
           {{- else }}
           secretName: {{ template "harbor.nginx" . }}
           {{- end }}
-      {{- end }}
     {{- with .Values.nginx.nodeSelector }}
       nodeSelector:
 {{ toYaml . | indent 8 }}

@@ -23,7 +23,7 @@ spec:
     - {{ . | quote }}
     {{- end }}
   hostPath:
-    path: {{ $root.Values.persistence.hostPath }}/{{$i}}
+    path: {{ $root.Values.persistence.hostPath }}/{{ $root.Release.Name }}/{{$i}}
     type: "DirectoryOrCreate"
 ---
 {{- end }}
